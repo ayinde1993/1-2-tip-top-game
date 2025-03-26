@@ -1,0 +1,25 @@
+name: Auto Pull Request
+
+on:
+  push:
+    branches:
+      - '*'          # Triggers on any branch except main
+      - '!main'      # Excludes the main branch
+      - '!develop'
+      - '!master'
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: ${{ github.ref_name }}  # Uses the pushed branch name
+          base: develop                      # Target branch for the PR
+          title: "Auto PR: ${{ github.ref_name }}"
+          body: "This is an automatically generated PR from ${{ github.ref_name }}."
+          labels: "auto-pr"

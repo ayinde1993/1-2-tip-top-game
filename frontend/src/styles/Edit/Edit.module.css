@@ -1,0 +1,75 @@
+.body {
+  @apply flex flex-col min-h-screen justify-between w-[100%] gap-[20px];
+}
+.container {
+  @apply flex flex-col items-center;
+}
+.title {
+  @apply text-[#39590A] font-extrabold text-[20px] w-[100vw] p-[20px];
+}
+.image {
+  @apply flex items-center w-[90vw] rounded-[20px];
+}
+.text {
+  @apply text-center w-[90vw] p-[20px];
+}
+.btnContainer {
+  @apply flex flex-col items-center mb-5;
+}
+
+.lotsContainer {
+  @apply flex justify-around flex-wrap;
+}
+.lotsSubContainer {
+  @apply flex flex-col justify-center items-center m-[10px] text-center;
+}
+.lotsImage {
+  @apply w-[150px] h-[150px] object-cover rounded-[10px];
+}
+.lotsText {
+  @apply mt-[10px] text-[16px] text-[#333];
+}
+
+/* Tablets */
+@media (min-width: 769px) {
+  .body {
+    @apply flex flex-col min-h-screen justify-between w-[100%];
+  }
+  .container {
+    @apply flex flex-col items-center;
+  }
+  .title {
+    @apply text-[#39590A] font-extrabold p-[10px] text-[30px];
+  }
+  .image {
+    @apply flex items-center p-[20px] rounded-[20px];
+  }
+  .text {
+    @apply w-[825px] text-center p-[10px];
+  }
+  .btnContainer {
+    @apply flex flex-col items-center p-[10px];
+  }
+}
+
+/* Laptops and larger devices */
+@media (min-width: 1280px) {
+  .body {
+    @apply flex flex-col min-h-screen justify-between;
+  }
+  .container {
+    @apply flex flex-col items-center;
+  }
+  .title {
+    @apply text-[#39590A] font-extrabold ml-[50px] text-[30px];
+  }
+  .image {
+    @apply flex items-center mb-5 rounded-[20px];
+  }
+  .text {
+    @apply w-[825px] text-center mb-5;
+  }
+  .btnContainer {
+    @apply flex flex-col items-center mb-5;
+  }
+}

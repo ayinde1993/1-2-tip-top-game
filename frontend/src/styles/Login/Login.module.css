@@ -1,0 +1,168 @@
+.body {
+  @apply flex flex-col;
+}
+.leftPartContainer {
+  @apply flex flex-col justify-around w-screen min-h-[90vh] p-[15px];
+}
+.title {
+  @apply flex justify-center items-center text-[22px] font-extrabold h-[60px] w-[90vw];
+}
+.text {
+  @apply flex flex-col justify-around items-center w-[90vw] h-[300px] rounded-[10px] text-[15px] p-[15px];
+}
+.testimonialsContainer {
+  @apply flex flex-col justify-around items-center w-[90vw] h-[300px] rounded-[10px] text-[20px] p-[10px] gap-[20px];
+}
+.testimonialsTitle {
+  @apply flex justify-center items-center text-[20px] font-extrabold;
+}
+.testimonialsSubContainer {
+  @apply flex justify-between h-[100px] gap-[20px];
+}
+.iconContainer {
+  @apply flex justify-center items-center w-[80px] h-[80px] rounded-full;
+}
+.testimonialsText {
+  @apply w-[70%];
+}
+.text2 {
+  @apply text-[14px] font-extrabold;
+}
+.text3 {
+  @apply text-[13px];
+}
+
+.rightPartContainer {
+  @apply flex justify-center items-center w-screen h-screen;
+}
+.rightPartSubContainer {
+  @apply w-[90vw] h-[70vh] rounded-[10px];
+}
+.socialMediaBtns {
+  @apply flex flex-col justify-center items-center gap-[20px] h-[20%];
+}
+.fbBtn {
+  @apply bg-[#4267b2] text-white text-[16px] py-[12px] px-[24px] border-0 rounded-[4px];
+}
+.formContainer {
+  @apply flex flex-col justify-around items-center h-[50%];
+}
+.inputContainer {
+  @apply flex flex-col justify-around items-center gap-[20px];
+}
+
+
+/* Tablets */
+@media (min-width: 769px) {
+  .body {
+    @apply flex;
+  }
+  .leftPartContainer {
+    @apply flex flex-col justify-around items-center w-screen h-[30vh] p-[20px];
+  }
+  .title {
+    @apply flex justify-center items-center text-[22px] font-extrabold h-[60px] w-[90vw];
+  }
+  .text {
+    @apply flex flex-col justify-around items-center w-[90vw] h-[236px] rounded-[10px] text-[20px] p-[20px];
+  }
+  .testimonialsContainer {
+    @apply flex flex-col justify-around items-center w-[90vw] h-[236px] rounded-[10px] text-[20px] p-[20px] gap-[20px];
+  }
+  .testimonialsTitle {
+    @apply flex justify-center items-center text-[20px] font-extrabold;
+  }
+  .testimonialsSubContainer {
+    @apply flex justify-between h-[80px];
+  }
+  .iconContainer {
+    @apply flex justify-center items-center w-[70px] h-[70px] rounded-full;
+  }
+  .testimonialsText {
+    @apply w-[80%];
+  }
+  .text2 {
+    @apply text-[14px] font-extrabold;
+  }
+  .text3 {
+    @apply text-[13px];
+  }
+
+  .rightPartContainer {
+    @apply flex justify-center items-center w-screen min-h-[70vh];
+  }
+  .rightPartSubContainer {
+    @apply w-[531px] h-[70vh] rounded-[10px];
+  }
+  .socialMediaBtns {
+    @apply flex flex-col justify-center items-center gap-[20px] h-[30%];
+  }
+  .fbBtn {
+    @apply bg-[#4267b2] text-white text-[16px] py-[12px] px-[24px] border-0 rounded-[4px];
+  }
+  .formContainer {
+    @apply flex flex-col justify-around items-center h-[50%];
+  }
+  .inputContainer {
+    @apply flex flex-col justify-around items-center gap-[20px];
+  }
+  .inputSubContainer {
+    @apply flex justify-between w-full;
+  }
+}
+
+/* Laptops and larger devices */
+@media (min-width: 1280px) {
+  .body {
+    @apply flex flex-row;
+  }
+  .leftPartContainer {
+    @apply flex flex-col justify-around w-1/2 h-[90vh] pl-[55px];
+  }
+  .title {
+    @apply flex justify-center items-center text-[22px] font-extrabold h-[60px] w-[426px];
+  }
+  .text {
+    @apply flex flex-col justify-around items-center w-[597px] h-[236px] rounded-[10px] text-[20px] p-[20px];
+  }
+  .testimonialsContainer {
+    @apply flex flex-col justify-around items-center w-[597px] h-[236px] rounded-[10px] text-[20px] p-[20px] gap-[20px];
+  }
+  .testimonialsTitle {
+    @apply flex justify-center items-center text-[20px] font-extrabold;
+  }
+  .testimonialsSubContainer {
+    @apply flex justify-between h-[80px];
+  }
+  .iconContainer {
+    @apply flex justify-center items-center w-[70px] h-[70px] rounded-full;
+  }
+  .testimonialsText {
+    @apply w-[80%];
+  }
+  .text2 {
+    @apply text-[14px] font-extrabold;
+  }
+  .text3 {
+    @apply text-[13px];
+  }
+
+  .rightPartContainer {
+    @apply flex justify-center items-center w-1/2 h-screen;
+  }
+  .rightPartSubContainer {
+    @apply w-[531px] h-[650px] rounded-[10px];
+  }
+  .socialMediaBtns {
+    @apply flex flex-col justify-center items-center gap-[20px] h-[30%];
+  }
+  .fbBtn {
+    @apply bg-[#4267b2] text-white text-[16px] py-[12px] px-[24px] border-0 rounded-[4px];
+  }
+  .formContainer {
+    @apply flex flex-col justify-around items-center h-[50%];
+  }
+  .inputContainer {
+    @apply flex flex-col justify-around items-center gap-[20px];
+  }
+}

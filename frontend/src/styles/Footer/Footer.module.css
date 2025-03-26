@@ -1,0 +1,24 @@
+.body {
+  @apply flex justify-around bg-[#39590A] p-5;
+}
+.container {
+  @apply text-left text-white;
+}
+.subFooter {
+  @apply text-center bg-[#e0e0e0] p-2.5 text-black;
+}
+.input {
+  @apply p-2.5 mb-2.5 w-full;
+}
+.btn {
+  @apply py-2.5 px-5 bg-black text-white w-full;
+}
+.title {
+  @apply text-[#85db18];
+}
+.text1 {
+  @apply text-[#ffdb4f] no-underline;
+}
+.text2 {
+  @apply text-[#ffffff] no-underline;
+}

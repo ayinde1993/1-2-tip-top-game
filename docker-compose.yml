@@ -1,0 +1,199 @@
+services:
+  # Jenkins
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    user: root  # Run as root to have Docker permissions
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket
+      - /usr/bin/docker:/usr/bin/docker  # Mount Docker binary
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jenkins.rule=Host(`jenkins.localhost`)"
+      - "traefik.http.services.jenkins.loadbalancer.server.port=8080"
+    networks:
+      - web
+    environment:
+      - JAVA_OPTS=-Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DOCKER_CERT_PATH=
+      - DOCKER_TLS_VERIFY=
+  # Traefik - Reverse Proxy
+  traefik:
+    image: traefik:v2.5
+    container_name: traefik
+    command:
+      - "--api.insecure=true" # Enable dashboard (not recommended for production)
+      - "--providers.docker=true" # Enable Docker provider
+      - "--entryPoints.web.address=:80" # Expose HTTP port 80
+    ports:
+      - "8087:80" # HTTP
+      - "8081:8082" # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock" # Allow Traefik to dynamically detect containers
+    networks:
+      - web
+
+  # Frontend - React/Vue/Angular App
+  frontend:
+    build:
+      context: ./frontend
+    container_name: tip_top_frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - PORT=4200
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`frontend.localhost`)" # Route traffic via Traefik
+      - "traefik.http.services.frontend.loadbalancer.server.port=4200" # Expose frontend
+    networks:
+      - web
+    depends_on:
+      - backend
+
+  # Backend - Node.js/Express API
+  backend:
+    build:
+      context: ./backend
+    container_name: tip_top_backend
+    ports:
+    - "4000:4000" # Expose API
+    env_file:
+      - ./backend/.env
+    # volumes:
+    # - ./backend:/app
+    # - /app/node_modules
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`backend.localhost`)"
+      - "traefik.http.services.backend.loadbalancer.server.port=4000" # Expose API
+    networks:
+      - web
+
+  # Database - MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: tip_top_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: tip_top_game
+    ports:
+      - "27017:27017"
+    volumes:
+      - db_data:/data/db
+    networks:
+      - web
+
+  # MongoDB Admin Interface (optionnel)
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "8084:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - web
+
+
+  # Prometheus - Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    platform: linux/${TARGETARCH:-amd64}
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml # Custom config
+      - prometheus_data:/prometheus # Persist Prometheus data
+    ports:
+      - "9090:9090" # Prometheus UI
+    depends_on:
+      - jenkins
+    networks:
+      - web
+
+  # Grafana - Visualization
+  grafana:
+    image: grafana/grafana:latest
+    platform: linux/${TARGETARCH:-amd64}
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Default admin password
+    ports:
+      - "3001:3000" # Avoid conflict with React port 3000
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - web
+    volumes:
+      - grafana_data:/var/lib/grafana # Persist Grafana settings
+
+  # SonarQube Database - PostgreSQL
+  sonarqube_db:
+    image: postgres:latest
+    container_name: sonarqube_db
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonarqube
+    volumes:
+      - sonarqube_db_data:/var/lib/postgresql/data # Persist SonarQube DB
+    networks:
+      - web
+
+  # SonarQube - Code Quality Analysis
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    environment:
+      SONARQUBE_JDBC_URL: jdbc:postgresql://sonarqube_db:5432/sonarqube
+      SONARQUBE_JDBC_USERNAME: sonar
+      SONARQUBE_JDBC_PASSWORD: sonar
+    depends_on:
+      - sonarqube_db
+    ports:
+      - "9000:9000"
+    networks:
+      - web
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
+  # cAdvisor - Container Monitoring
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - "8083:8080"  # Change port to avoid conflict with Prometheus or other services
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge # Isolated network for services
+
+volumes:
+  db_data:
+  sonarqube_db_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  grafana_data:
+  prometheus_data:
+  jenkins_data:

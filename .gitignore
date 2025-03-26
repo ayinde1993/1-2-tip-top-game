@@ -1,0 +1,11 @@
+# Dépendances
+node_modules/
+**/package-lock.json
+/yarn.lock
+
+# Environnement
+.env
+
+./backend/node_modules/
+./frontend/node_modules/
+./backend/.env

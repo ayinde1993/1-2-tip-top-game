@@ -1,0 +1,31 @@
+# Allow all robots to access everything
+User-agent: *
+Disallow:
+
+# Block specific user-agent (e.g., a bot)
+User-agent: Semalt
+Disallow: /
+
+User-agent: Baidu
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+User-agent: Scrapy
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: Botzilla
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BlexBot
+Disallow: /
+
+# Sitemap location
+Sitemap: https://dsp5-archi-f24a-15M-G2.fr/sitemap.xml

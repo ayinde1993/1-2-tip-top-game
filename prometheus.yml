@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 15s  # Scrape every 15 seconds
+
+scrape_configs:
+  # Jenkins metrics
+  - job_name: 'jenkins'
+    static_configs:
+      - targets: ['jenkins:8080']  # Replace with your Jenkins container name or IP
+    metrics_path: '/prometheus'  # Jenkins Prometheus endpoint
+
+  # cAdvisor metrics
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']

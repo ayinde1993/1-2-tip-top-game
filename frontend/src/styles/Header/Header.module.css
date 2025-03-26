@@ -1,0 +1,28 @@
+.body {
+  @apply flex flex-row justify-between bg-[#theTipTopColor] h-[80px];
+}
+.logoContainer {
+  @apply flex justify-start w-[30%] pl-[10px] cursor-pointer;
+}
+.btnsContainer {
+  @apply flex justify-around items-center w-[30%] pr-[10px];
+}
+.btn {
+  @apply bg-inherit border-0 text-black cursor-pointer text-[16px];
+}
+
+/* Laptops and larger devices */
+@media (min-width: 1280px) {
+  .body {
+    @apply flex flex-row justify-between h-[80px];
+  }
+  .logoContainer {
+    @apply flex justify-start w-[10%] pl-[30px] cursor-pointer;
+  }
+  .btnsContainer {
+    @apply flex justify-around w-[60%] pr-[100px];
+  }
+  .btn {
+    @apply bg-inherit border-0 text-white cursor-pointer text-[16px];
+  }
+}
