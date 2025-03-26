@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(cors())
 
-app.get('/api/hello', (req, res) => {
+app.get('/api/hello', (req, res) => {je 
   res.status(200).json({ message: 'Hello, World!' });
 });
 

@@ -66,6 +66,55 @@ const registerUserController = async (req, res) => {
 
 };
 
+//login user
+const loginUserController = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        // check if all fields are provided
+        if(!email || !password) {
+            return res.status(500).json({
+                success: false,
+                message: 'please provide Email OR Password',
+            });
+        }
+        // check if user exists
+        const user = await userModel.findOne({ email});
+        if(!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User Not Found',
+            });
+        }
+        // check user password AND compare then 
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch) {
+            return res.status(500).json({
+                success: false,
+                message: 'Invalid email or password',
+            });
+        }
+        // create token
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { 
+            expiresIn: '1h' });
+        // send token to client 
+        user.password = undefined
+        res.status(200).json({
+            success: true,
+            message: 'login successful',
+            token,
+            user,
+           
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'error in login controller',
+            error
+        });
+    }
+}   
+
+
 
 // logout user controller
 const logoutController = async (req, res) => {
