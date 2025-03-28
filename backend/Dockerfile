@@ -10,6 +10,8 @@ RUN npm install
 # Installer Nodemon globalement pour le hot reload
 RUN npm install -g nodemon
 
+
+# Copier le reste du code
 COPY . .
 
 # Exposer le port sur lequel le serveur écoute
