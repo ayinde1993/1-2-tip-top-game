@@ -104,7 +104,47 @@ L'équipe Thé Tip Top`,
   return sendEmail(mailOptions);
 };
 
+/**
+ * Envoie un email de bienvenue à un nouvel utilisateur après inscription.
+ * @param {Object} params - Informations de l'utilisateur.
+ * @param {string} params.userName - Nom de l'utilisateur.
+ * @param {string} params.email - Email de l'utilisateur.
+ * @returns {Promise}
+ */
+const sendWelcomeEmail = async ({ userName, email }) => {
+  const mailOptions = {
+    from: `Thé Tip Top <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Bienvenue dans l’univers Thé Tip Top ! 🌿',
+    text: `Bonjour ${userName},
+
+        Nous vous souhaitons la bienvenue dans la communauté Thé Tip Top 🍵.
+
+        Merci de votre inscription. Vous pouvez dès maintenant participer à nos concours, gagner des cadeaux, et profiter de nos offres exclusives !
+
+        Restez connectés, et encore bienvenue parmi nous 😊
+
+Cordialement,
+L'équipe Thé Tip Top`,
+    html: `
+      <p>Bonjour <strong>${userName}</strong>,</p>
+      <p>Nous vous souhaitons la bienvenue dans la communauté <strong>Thé Tip Top</strong> 🍵.</p>
+      <p>Merci de votre inscription. Vous pouvez dès maintenant participer à nos concours, gagner des cadeaux, et profiter de nos offres exclusives !</p>
+      <p>Restez connectés, et encore bienvenue parmi nous 😊</p>
+      <p>Cordialement,<br><em>L'équipe Thé Tip Top</em></p>
+    `,
+    envelope: {
+      from: process.env.EMAIL_USER,
+      to: email
+    }
+  };
+
+  return sendEmail(mailOptions); //
+};
+
+
 module.exports = {
   sendAdminNotification,
-  sendPlayerNotification
+  sendPlayerNotification,
+  sendWelcomeEmail,
 };

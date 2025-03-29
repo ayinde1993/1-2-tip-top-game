@@ -1,7 +1,7 @@
 const userModel = require("../models/usersModel");
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const { sendWelcomeEmail } = require('../config/emailService');
 // Register a new user
 const registerUserController = async (req, res) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -49,6 +49,7 @@ const registerUserController = async (req, res) => {
             answer,
 
         });
+        await sendWelcomeEmail({ userName, email });
 
         user.password = undefined;
 

@@ -1,5 +1,6 @@
 const userModel = require("../models/usersModel");
 const gainModel = require("../models/gainsModel");
+const winningTicketModel = require("../models/winningTicket");
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken')
@@ -106,14 +107,14 @@ const seeMyGainsController = async (req, res) => {
                 message: 'No gains found',
             });
         }
-        res.status(200).json({  
+        res.status(200).json({
             success: true,
             message: 'Gains fetched successfully',
             gains,
             nombreGains: gains.length
         });
     } catch (error) {
-        res.status(500).json({  
+        res.status(500).json({
             success: false,
             message: 'Internal server error',
             error: error.message
@@ -455,11 +456,11 @@ const logoutUserController = async (req, res) => {
             });
         }
         if (loggedInUser.userType === 'admin' || loggedInUser.userType === 'employer') {
-           
+
 
             res.clearCookie('authToken'); // Suppression du cookie 'authToken' si tu utilises des cookies
 
-          
+
 
             return res.status(200).json({
                 success: true,
@@ -479,119 +480,151 @@ const logoutUserController = async (req, res) => {
 
 const forgotPasswordController = async (req, res) => {
     try {
-      const { email } = req.body;
-  
-      // Vérifier que l'email est fourni
-      if (!email) {
-        return res.status(400).json({
-          success: false,
-          message: "L'email est requis."
-        });
-      }
-  
-      // Rechercher l'utilisateur par email
-      const user = await userModel.findOne({ email });
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "Utilisateur non trouvé."
-        });
-      }
-  
-      // Générer un token de réinitialisation valable 1 heure
-      const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-  
-      // Optionnel : Sauvegarder le token et sa date d'expiration dans la base
-      // user.resetPasswordToken = resetToken;
-      // user.resetPasswordExpires = Date.now() + 3600000; // 1 heure en ms
-      // await user.save();
-  
-      // Créer le transporteur pour envoyer l'email avec les informations de votre fichier .env
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,  // Ex: mouaadsellak123@gmail.com
-          pass: process.env.EMAIL_PASS   // Ex: "dxsf fanh vliv cmbw"
+        const { email } = req.body;
+
+        // Vérifier que l'email est fourni
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: "L'email est requis."
+            });
         }
-      });
-  
-      // Construire l'URL de réinitialisation
-      // process.env.CLIENT_URL peut être défini dans votre .env pour pointer vers votre front-end
-      const resetUrl = `${process.env.CLIENT_URL || 'http://46.202.168.187:5000'}/resetpassword/${resetToken}`;
-  
-      // Configuration de l'email à envoyer
-      const mailOptions = {
-        from: `Support <${process.env.EMAIL_USER}>`,
-        to: email,
-        subject: 'Réinitialisation de votre mot de passe',
-        html: `
+
+        // Rechercher l'utilisateur par email
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "Utilisateur non trouvé."
+            });
+        }
+
+        // Générer un token de réinitialisation valable 1 heure
+        const resetToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Optionnel : Sauvegarder le token et sa date d'expiration dans la base
+        // user.resetPasswordToken = resetToken;
+        // user.resetPasswordExpires = Date.now() + 3600000; // 1 heure en ms
+        // await user.save();
+
+        // Créer le transporteur pour envoyer l'email avec les informations de votre fichier .env
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,  // Ex: mouaadsellak123@gmail.com
+                pass: process.env.EMAIL_PASS   // Ex: "dxsf fanh vliv cmbw"
+            }
+        });
+
+        // Construire l'URL de réinitialisation
+        // process.env.CLIENT_URL peut être défini dans votre .env pour pointer vers votre front-end
+        const resetUrl = `${process.env.CLIENT_URL || 'http://46.202.168.187:5000'}/resetpassword/${resetToken}`;
+
+        // Configuration de l'email à envoyer
+        const mailOptions = {
+            from: `Support <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: 'Réinitialisation de votre mot de passe',
+            html: `
           <p>Vous avez demandé à réinitialiser votre mot de passe.</p>
           <p>Cliquez sur le lien suivant pour réinitialiser votre mot de passe (valable 1 heure) :</p>
           <p><a href="${resetUrl}">${resetUrl}</a></p>
           <p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>
         `
-      };
-  
-      // Envoi de l'email
-      await transporter.sendMail(mailOptions);
-  
-      res.status(200).json({
-        success: true,
-        message: 'Un email de réinitialisation a été envoyé.'
-      });
-    } catch (error) {
-      console.error("Erreur dans forgotPasswordController:", error);
-      res.status(500).json({
-        success: false,
-        message: "Erreur interne du serveur.",
-        error: error.message
-      });
-    }
-  };
+        };
 
-  const getAllUsersGainsController = async (req, res) => {
-    try {
-      const userEmail = req.body.email;
-      if (userEmail) {
-        const user = await userModel.findOne({ email: userEmail });
-        if (!user) {
-          return res.status(404).json({
-            success: false,
-            message: 'this user does not exist',
-          });
-        }
-        const gains = await gainModel.find({ userId: user._id });
-        if (gains.length === 0) {
-          return res.status(404).json({
-            success: false,
-            message: 'this user has no gains',
-          });   
-        }
-        return res.status(200).json({
-          success: true,
-          message: 'Gains fetched successfully.',
-          gains,
-          nombreGains: gains.length,
-          totalGains: gains.reduce((acc, gain) => acc + gain.prizeValue + " euros", 0)
+        // Envoi de l'email
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({
+            success: true,
+            message: 'Un email de réinitialisation a été envoyé.'
         });
-      }
-      const gains = await gainModel.find();
-      return res.status(200).json({
-        success: true,
-        message: 'Gains fetched successfully.',
-        gains,
-        nombreGains: gains.length,
-        totalGains: gains.reduce((acc, gain) => acc + gain.prizeValue + " euros", 0)
-      });
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: 'Error fetching gains.',
-        error: error.message
-      });
+        console.error("Erreur dans forgotPasswordController:", error);
+        res.status(500).json({
+            success: false,
+            message: "Erreur interne du serveur.",
+            error: error.message
+        });
     }
-  };
-  
+};
+
+const computeStats = (tickets) => {
+    const used = tickets.filter(t => t.isUsed);
+    const unused = tickets.filter(t => !t.isUsed);
+    return {
+        usedTickets: used.length,
+        totalValueUsedTickets: used.reduce((acc, t) => acc + t.prizeValue, 0),
+        unusedTickets: unused.length,
+        totalValueUnusedTickets: unused.reduce((acc, t) => acc + t.prizeValue, 0),
+    };
+};
+
+const getAllUsersGainsController = async (req, res) => {
+    try {
+        const winningTickets = await winningTicketModel.find();
+        const stats = computeStats(winningTickets);
+
+        const userEmail = req.body.email?.trim().toLowerCase();
+
+        if (userEmail) {
+            const user = await userModel.findOne({ email: userEmail });
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found',
+                    ...stats
+                });
+            }
+
+            const userGains = await gainModel.find({ userId: user._id });
+            if (!userGains.length) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User has no gains',
+                    ...stats
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'User gains fetched successfully',
+                userGains,
+                nombreGains: userGains.length,
+                totalValueGains: userGains.reduce((acc, gain) => acc + gain.prizeValue, 0) + " euros",
+                ...stats
+            });
+        }
+
+        const gains = await gainModel.find();
+        if (!gains.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'No global gains found',
+                ...stats
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Global gains fetched successfully',
+            gains,
+            nombreGains: gains.length,
+            totalGains: gains.reduce((acc, gain) => acc + gain.prizeValue, 0) + " euros",
+            ...stats
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Error fetching gains',
+            error: error.message
+        });
+    }
+};
+
+
 
 
 
